@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import Modal from '../components/Modal'
 import Icon from '../components/Icon'
@@ -25,16 +25,16 @@ export default function FinalizarPedido() {
     setMesas(data || [])
   }
 
-  useEffect(() => { carregarMesas() }, [])
+  const mesaSelecionadaRef = useRef(null)
+  useEffect(() => {
+    mesaSelecionadaRef.current = mesaSelecionada
+  }, [mesaSelecionada])
 
-  const abrirConta = async (mesa) => {
-    setErro('')
-    setFormaPagamento('')
-    setMesaSelecionada(mesa)
+  const carregarConta = async (mesaId) => {
     const { data: pedidoAtual } = await supabase
       .from('pedidos')
       .select('*')
-      .eq('mesa_id', mesa.id)
+      .eq('mesa_id', mesaId)
       .in('status', ['aberto', 'em_preparo'])
       .order('criado_em', { ascending: false })
       .limit(1)
@@ -51,6 +51,34 @@ export default function FinalizarPedido() {
     } else {
       setItens([])
     }
+  }
+
+  useEffect(() => {
+    carregarMesas()
+
+    // Escuta mudanças em tempo real (feitas por outros dispositivos/usuários)
+    // e atualiza a tela automaticamente, sem precisar recarregar a página.
+    const canal = supabase
+      .channel('finalizar-pedido-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => {
+        carregarMesas()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, () => {
+        if (mesaSelecionadaRef.current) carregarConta(mesaSelecionadaRef.current.id)
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'itens_pedido' }, () => {
+        if (mesaSelecionadaRef.current) carregarConta(mesaSelecionadaRef.current.id)
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(canal)
+  }, [])
+
+  const abrirConta = async (mesa) => {
+    setErro('')
+    setFormaPagamento('')
+    setMesaSelecionada(mesa)
+    await carregarConta(mesa.id)
   }
 
   const total = itens.reduce((acc, i) => acc + i.quantidade * i.valor_unitario, 0)

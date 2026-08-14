@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { useAuth } from '../context/AuthContext'
 import Icon from '../components/Icon'
@@ -24,9 +24,31 @@ export default function FazerPedido() {
   const [erroPizza, setErroPizza] = useState('')
   const [salvandoPizza, setSalvandoPizza] = useState(false)
 
+  const mesaSelecionadaRef = useRef(null)
+  useEffect(() => {
+    mesaSelecionadaRef.current = mesaSelecionada
+  }, [mesaSelecionada])
+
   useEffect(() => {
     carregarMesas()
     carregarCardapio()
+
+    // Escuta mudanças em tempo real (feitas por outros dispositivos/usuários)
+    // e atualiza a tela automaticamente, sem precisar recarregar a página.
+    const canal = supabase
+      .channel('fazer-pedido-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => {
+        carregarMesas()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, () => {
+        if (mesaSelecionadaRef.current) carregarComanda(mesaSelecionadaRef.current.id)
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'itens_pedido' }, () => {
+        if (mesaSelecionadaRef.current) carregarComanda(mesaSelecionadaRef.current.id)
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(canal)
   }, [])
 
   const carregarMesas = async () => {
@@ -230,7 +252,7 @@ export default function FazerPedido() {
               <button className="modal__close" onClick={fecharCarrinho}><Icon name="close" size={18} /></button>
             </div>
 
-            <div className="type-tabs" style={{ padding: '20px 20px' }}>
+            <div className="type-tabs" style={{ padding: '12px 20px 0' }}>
               {tipos.map((t) => (
                 <button key={t.id} className={`type-tab ${tipoAtivo === t.id ? 'active' : ''}`} onClick={() => setTipoAtivo(t.id)}>
                   {t.nome}

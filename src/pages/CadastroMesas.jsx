@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { QRCodeCanvas } from 'qrcode.react'
+import { supabase } from '../supabaseClient'
 import { useSupabaseTable } from '../hooks/useSupabaseTable'
 import Modal from '../components/Modal'
 import Icon from '../components/Icon'
@@ -8,13 +9,24 @@ import { StatusMesaBadge } from '../components/StatusBadge'
 const emptyForm = { id: null, numero: '' }
 
 export default function CadastroMesas() {
-  const { rows, loading, insert, update, remove } = useSupabaseTable('mesas', { orderBy: 'numero', ascending: true })
+  const { rows, loading, insert, update, remove, refetch } = useSupabaseTable('mesas', { orderBy: 'numero', ascending: true })
   const [modalAberto, setModalAberto] = useState(false)
   const [form, setForm] = useState(emptyForm)
   const [erro, setErro] = useState('')
   const [salvando, setSalvando] = useState(false)
   const [qrMesa, setQrMesa] = useState(null)
   const qrRef = useRef(null)
+
+  // Escuta mudanças em tempo real (feitas por outros dispositivos/usuários,
+  // como o status virando "ocupada" quando um pedido é enviado) e atualiza
+  // a lista automaticamente, sem precisar recarregar a página.
+  useEffect(() => {
+    const canal = supabase
+      .channel('cadastro-mesas-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, () => refetch())
+      .subscribe()
+    return () => supabase.removeChannel(canal)
+  }, [refetch])
 
   const linkCliente = (mesa) => `${window.location.origin}/mesa/${mesa.qrcode_token}`
 
