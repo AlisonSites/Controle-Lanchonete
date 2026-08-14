@@ -252,7 +252,7 @@ export default function FazerPedido() {
               <button className="modal__close" onClick={fecharCarrinho}><Icon name="close" size={18} /></button>
             </div>
 
-            <div className="type-tabs" style={{ padding: '12px 20px 0' }}>
+            <div className="type-tabs" style={{ padding: '20px 20px' }}>
               {tipos.map((t) => (
                 <button key={t.id} className={`type-tab ${tipoAtivo === t.id ? 'active' : ''}`} onClick={() => setTipoAtivo(t.id)}>
                   {t.nome}

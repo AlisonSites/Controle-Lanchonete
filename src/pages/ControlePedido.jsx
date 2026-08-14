@@ -23,21 +23,21 @@ export default function ControlePedido() {
       .order('criado_em', { ascending: true })
 
     const mapa = {}
-    ;(data || []).forEach((item) => {
-      const pid = item.pedido_id
-      if (!mapa[pid]) {
-        mapa[pid] = {
-          pedidoId: pid,
-          mesaNumero: item.pedidos?.mesas?.numero,
-          origem: item.pedidos?.origem,
-          usuarioId: item.pedidos?.usuario_id,
-          usuarioNome: item.pedidos?.usuarios?.nome,
-          criadoEm: item.pedidos?.criado_em,
-          itens: [],
+      ; (data || []).forEach((item) => {
+        const pid = item.pedido_id
+        if (!mapa[pid]) {
+          mapa[pid] = {
+            pedidoId: pid,
+            mesaNumero: item.pedidos?.mesas?.numero,
+            origem: item.pedidos?.origem,
+            usuarioId: item.pedidos?.usuario_id,
+            usuarioNome: item.pedidos?.usuarios?.nome,
+            criadoEm: item.pedidos?.criado_em,
+            itens: [],
+          }
         }
-      }
-      mapa[pid].itens.push(item)
-    })
+        mapa[pid].itens.push(item)
+      })
     const lista = Object.values(mapa).sort((a, b) => new Date(a.criadoEm) - new Date(b.criadoEm))
     setGrupos(lista)
     setLoading(false)
@@ -148,9 +148,22 @@ export default function ControlePedido() {
         title={detalhe ? `Itens pendentes — Mesa ${detalhe.mesaNumero}` : ''}
         footer={detalhe && (
           <>
-            <button className="btn btn--danger" onClick={() => cancelarPedido(detalhe)}>Cancelar pedido</button>
-            <button className="btn btn--ghost" onClick={() => imprimir(detalhe)}><Icon name="print" size={15} /> Imprimir comanda</button>
-            <button className="btn btn--success" onClick={() => marcarPedidoRealizado(detalhe)}><Icon name="check" size={15} /> Pedido realizado</button>
+            <button className="btn btn--danger" onClick={() => cancelarPedido(detalhe)}>
+              <Icon name="close" size={15}/>
+              <div className="ocult-modal-button">
+                Cancelar pedido
+              </div>
+            </button>
+            <button className="btn btn--ghost" onClick={() => imprimir(detalhe)}><Icon name="print" size={15} />
+              <div className="ocult-modal-button">
+                Imprimir comanda
+              </div>
+            </button>
+            <button className="btn btn--success" onClick={() => marcarPedidoRealizado(detalhe)}><Icon name="check" size={15} />
+              <div className="ocult-modal-button">
+                Pedido realizado
+              </div>
+            </button>
           </>
         )}
       >
