@@ -6,7 +6,7 @@ import './NotificationContext.css'
 
 const NotificationContext = createContext(null)
 const MAX_TOASTS = 4
-const MAX_HISTORICO = 30
+const MAX_NOTIFICACOES = 200
 const DURACAO_TOAST_MS = 7000
 
 // Toca um beep curto via Web Audio (sem depender de nenhum arquivo de som).
@@ -33,9 +33,8 @@ function tocarSom() {
 
 export function NotificationProvider({ children }) {
   const { usuario, podeAcessar, isAdmin } = useAuth()
-  const [historico, setHistorico] = useState([])
+  const [notificacoes, setNotificacoes] = useState([])
   const [toasts, setToasts] = useState([])
-  const [naoLidas, setNaoLidas] = useState(0)
 
   const relevantePara = useCallback((notif) => {
     if (!usuario) return false
@@ -45,11 +44,30 @@ export function NotificationProvider({ children }) {
     return false
   }, [usuario, isAdmin, podeAcessar])
 
+  // Carrega o histórico já salvo no banco (funciona mesmo depois de recarregar
+  // a página ou trocar de dispositivo, já que o status "vista/arquivada" é
+  // gravado no banco através da coluna "lida").
+  const carregarNotificacoes = useCallback(async () => {
+    if (!usuario) {
+      setNotificacoes([])
+      return
+    }
+    const { data } = await supabase
+      .from('notificacoes')
+      .select('*')
+      .or(`usuario_destino_id.eq.${usuario.id},usuario_destino_id.is.null`)
+      .order('criado_em', { ascending: false })
+      .limit(MAX_NOTIFICACOES)
+    setNotificacoes((data || []).filter(relevantePara))
+  }, [usuario, relevantePara])
+
+  useEffect(() => {
+    carregarNotificacoes()
+  }, [carregarNotificacoes])
+
   const dispensarToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id))
 
-  const adicionarNotificacao = useCallback((notif) => {
-    setHistorico((prev) => [notif, ...prev].slice(0, MAX_HISTORICO))
-    setNaoLidas((n) => n + 1)
+  const dispararToast = useCallback((notif) => {
     setToasts((prev) => [...prev, notif].slice(-MAX_TOASTS))
     tocarSom()
     setTimeout(() => dispensarToast(notif.id), DURACAO_TOAST_MS)
@@ -62,17 +80,26 @@ export function NotificationProvider({ children }) {
       .channel('notificacoes-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notificacoes' }, (payload) => {
         const notif = payload.new
-        if (relevantePara(notif)) adicionarNotificacao(notif)
+        if (!relevantePara(notif)) return
+        setNotificacoes((prev) => [notif, ...prev].slice(0, MAX_NOTIFICACOES))
+        dispararToast(notif)
       })
       .subscribe()
 
     return () => supabase.removeChannel(canal)
-  }, [usuario, relevantePara, adicionarNotificacao])
+  }, [usuario, relevantePara, dispararToast])
 
-  const marcarTodasLidas = () => setNaoLidas(0)
+  // Marca como "vista": some da aba Novas e passa para Arquivadas.
+  // Atualiza a tela na hora e grava no banco (persiste entre sessões).
+  const marcarComoVista = useCallback(async (id) => {
+    setNotificacoes((prev) => prev.map((n) => (n.id === id ? { ...n, lida: true } : n)))
+    await supabase.from('notificacoes').update({ lida: true }).eq('id', id)
+  }, [])
+
+  const naoLidas = notificacoes.filter((n) => !n.lida).length
 
   return (
-    <NotificationContext.Provider value={{ historico, naoLidas, marcarTodasLidas }}>
+    <NotificationContext.Provider value={{ notificacoes, naoLidas, marcarComoVista }}>
       {children}
       <div className="toast-stack">
         {toasts.map((t) => (

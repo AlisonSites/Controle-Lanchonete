@@ -8,9 +8,8 @@ import './Layout.css'
 
 export default function Layout({ children }) {
   const { usuario, logout, podeAcessar, isAdmin } = useAuth()
-  const { historico, naoLidas, marcarTodasLidas } = useNotifications()
+  const { naoLidas } = useNotifications()
   const [open, setOpen] = useState(false)
-  const [notifAberta, setNotifAberta] = useState(false)
   const navigate = useNavigate()
 
   const itensMenu = PAGES.filter((p) => isAdmin || podeAcessar(p.chave))
@@ -67,39 +66,12 @@ export default function Layout({ children }) {
           <div className="topbar__notif">
             <button
               className="topbar__bell"
-              onClick={() => {
-                setNotifAberta((v) => !v)
-                if (!notifAberta) marcarTodasLidas()
-              }}
+              onClick={() => navigate('/notificacoes')}
               aria-label="Notificações"
             >
               <Icon name="bell" size={19} />
               {naoLidas > 0 && <span className="topbar__bell-badge">{naoLidas > 9 ? '9+' : naoLidas}</span>}
             </button>
-            {notifAberta && (
-              <>
-                <div className="notif-panel__scrim" onClick={() => setNotifAberta(false)} />
-                <div className="notif-panel">
-                  <div className="notif-panel__header">Notificações</div>
-                  <div className="notif-panel__list">
-                    {historico.length === 0 && (
-                      <p className="field-hint" style={{ padding: '14px 16px' }}>Nenhuma notificação ainda.</p>
-                    )}
-                    {historico.map((n) => (
-                      <div key={n.id} className="notif-panel__item">
-                        <span className={`notif-panel__dot notif-panel__dot--${n.tipo}`} />
-                        <div>
-                          <div className="notif-panel__msg">{n.mensagem}</div>
-                          <div className="notif-panel__time">
-                            {new Date(n.criado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
           </div>
           <div className="topbar__user mono">PIN de {usuario?.nome?.split(' ')[0]}</div>
         </header>

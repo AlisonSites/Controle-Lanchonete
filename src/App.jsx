@@ -16,6 +16,7 @@ import ControlePedido from './pages/ControlePedido'
 import FazerPedido from './pages/FazerPedido'
 import FinalizarPedido from './pages/FinalizarPedido'
 import Relatorio from './pages/Relatorio'
+import Notificacoes from './pages/Notificacoes'
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/pedidos/finalizar" element={<ProtectedRoute pageKey="finalizar_pedido"><FinalizarPedido /></ProtectedRoute>} />
 
             <Route path="/relatorio" element={<ProtectedRoute pageKey="relatorio"><Relatorio /></ProtectedRoute>} />
+            <Route path="/notificacoes" element={<ProtectedRoute><Notificacoes /></ProtectedRoute>} />
 
             <Route path="*" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           </Routes>
