@@ -16,7 +16,7 @@ export default function ControlePedido() {
     // depois - só o que realmente é novo entra na fila da cozinha.
     const { data } = await supabase
       .from('itens_pedido')
-      .select('id, pedido_id, quantidade, valor_unitario, observacao, criado_em, produtos(nome), pedidos!inner(id, criado_em, origem, mesas(numero), usuarios(nome))')
+      .select('id, pedido_id, quantidade, valor_unitario, observacao, criado_em, produtos(nome), pedidos!inner(id, criado_em, origem, usuario_id, mesas(numero), usuarios(nome))')
       .eq('status', 'pendente')
       .neq('pedidos.status', 'concluido')
       .neq('pedidos.status', 'cancelado')
@@ -30,6 +30,7 @@ export default function ControlePedido() {
           pedidoId: pid,
           mesaNumero: item.pedidos?.mesas?.numero,
           origem: item.pedidos?.origem,
+          usuarioId: item.pedidos?.usuario_id,
           usuarioNome: item.pedidos?.usuarios?.nome,
           criadoEm: item.pedidos?.criado_em,
           itens: [],
@@ -59,6 +60,27 @@ export default function ControlePedido() {
     // A mesa continua ocupada - ela só é liberada em "Finalizar Pedido".
     const ids = grupo.itens.map((i) => i.id)
     await supabase.from('itens_pedido').update({ status: 'pronto' }).in('id', ids)
+
+    // Avisa quem precisa saber: se foi o cliente que pediu pelo QR Code,
+    // manda para todo mundo com acesso a Fazer Pedido; se foi um garçom,
+    // manda só para ele.
+    const mensagem = `Pedido da Mesa ${grupo.mesaNumero} foi realizado!`
+    if (grupo.origem === 'cliente_qrcode') {
+      await supabase.from('notificacoes').insert({
+        tipo: 'pedido_realizado',
+        mensagem,
+        mesa_numero: grupo.mesaNumero,
+        usuario_destino_id: null,
+      })
+    } else if (grupo.usuarioId) {
+      await supabase.from('notificacoes').insert({
+        tipo: 'pedido_realizado',
+        mensagem,
+        mesa_numero: grupo.mesaNumero,
+        usuario_destino_id: grupo.usuarioId,
+      })
+    }
+
     setDetalhe(null)
     carregar()
   }

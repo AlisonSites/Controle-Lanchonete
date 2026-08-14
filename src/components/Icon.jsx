@@ -23,6 +23,7 @@ const paths = {
   download: 'M12 3v12m0 0l-4-4m4 4l4-4M4 21h16',
   cart: 'M3 4h2l2.4 12.4a2 2 0 002 1.6h8.2a2 2 0 002-1.94L21 8H6',
   clock: 'M12 7v5l3 3M12 21a9 9 0 100-18 9 9 0 000 18z',
+  bell: 'M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0',
 }
 
 export default function Icon({ name, size = 20, strokeWidth = 1.8, className = '' }) {
