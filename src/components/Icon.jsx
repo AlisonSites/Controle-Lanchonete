@@ -29,7 +29,7 @@ const paths = {
   trendingDown: 'M3 7l6 6 4-4 8 8M15 17h6v-6',
   calendar: 'M7 3v4M17 3v4M4 8h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z',
   wallet: 'M3 7a2 2 0 012-2h13a1 1 0 011 1v2M3 7v10a2 2 0 002 2h14a2 2 0 002-2v-8a1 1 0 00-1-1h-4a2 2 0 100 4h4M3 7l3-4h9',
-  dashboard: 'M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7zM12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z',
+  dashboard: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1m-2-4h.01',
 }
 
 export default function Icon({ name, size = 20, strokeWidth = 1.8, className = '' }) {
