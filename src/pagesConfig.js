@@ -7,7 +7,7 @@ export const PAGES = [
     titulo: 'Dashboard',
     descricao: 'Visão geral do dia: vendas, mesas e fila da cozinha',
     rota: '/dashboard',
-    icone: 'graphic',
+    icone: 'dashboard',
     categoria: 'Visão Geral',
   },
   {
