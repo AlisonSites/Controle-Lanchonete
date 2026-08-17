@@ -3,6 +3,14 @@
 
 export const PAGES = [
   {
+    chave: 'dashboard',
+    titulo: 'Dashboard',
+    descricao: 'Visão geral do dia: vendas, mesas e fila da cozinha',
+    rota: '/dashboard',
+    icone: 'grid',
+    categoria: 'Visão Geral',
+  },
+  {
     chave: 'fazer_pedido',
     titulo: 'Fazer Pedido',
     descricao: 'Selecione a mesa e monte a comanda',

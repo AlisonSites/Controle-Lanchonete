@@ -24,6 +24,11 @@ const paths = {
   cart: 'M3 4h2l2.4 12.4a2 2 0 002 1.6h8.2a2 2 0 002-1.94L21 8H6',
   clock: 'M12 7v5l3 3M12 21a9 9 0 100-18 9 9 0 000 18z',
   bell: 'M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0',
+  grid: 'M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z',
+  trendingUp: 'M3 17l6-6 4 4 8-8M15 7h6v6',
+  trendingDown: 'M3 7l6 6 4-4 8 8M15 17h6v-6',
+  calendar: 'M7 3v4M17 3v4M4 8h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z',
+  wallet: 'M3 7a2 2 0 012-2h13a1 1 0 011 1v2M3 7v10a2 2 0 002 2h14a2 2 0 002-2v-8a1 1 0 00-1-1h-4a2 2 0 100 4h4M3 7l3-4h9',
 }
 
 export default function Icon({ name, size = 20, strokeWidth = 1.8, className = '' }) {

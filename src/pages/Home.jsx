@@ -8,6 +8,12 @@ export default function Home() {
   const navigate = useNavigate()
 
   const modulos = PAGES.filter((p) => isAdmin || podeAcessar(p.chave))
+  const grupos = modulos.reduce((acc, p) => {
+    const cat = p.categoria || 'Outros'
+    if (!acc[cat]) acc[cat] = []
+    acc[cat].push(p)
+    return acc
+  }, {})
 
   return (
     <div>
@@ -24,19 +30,24 @@ export default function Home() {
           <p>Peça ao administrador para liberar o acesso do seu perfil em Gerenciamento de Acesso.</p>
         </div>
       ) : (
-        <div className="card-grid">
-          {modulos.map((m) => (
-            <div key={m.chave} className="module-card" onClick={() => navigate(m.rota)}>
-              <div className="module-card__icon">
-                <Icon name={m.icone} size={22} />
-              </div>
-              <div>
-                <div className="module-card__title">{m.titulo}</div>
-                <div className="module-card__desc">{m.descricao}</div>
-              </div>
+        Object.entries(grupos).map(([categoria, paginas]) => (
+          <div key={categoria}>
+            <div className="section-title">{categoria}</div>
+            <div className="card-grid" style={{ marginBottom: 8 }}>
+              {paginas.map((m) => (
+                <div key={m.chave} className="module-card" onClick={() => navigate(m.rota)}>
+                  <div className="module-card__icon">
+                    <Icon name={m.icone} size={22} />
+                  </div>
+                  <div>
+                    <div className="module-card__title">{m.titulo}</div>
+                    <div className="module-card__desc">{m.descricao}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))
       )}
     </div>
   )

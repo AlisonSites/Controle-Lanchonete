@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 import Login from './pages/Login'
 import Home from './pages/Home'
+import Dashboard from './pages/Dashboard'
 import MesaCliente from './pages/MesaCliente'
 import CadastroProdutos from './pages/CadastroProdutos'
 import TipoProduto from './pages/TipoProduto'
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="/mesa/:token" element={<MesaCliente />} />
 
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute pageKey="dashboard"><Dashboard /></ProtectedRoute>} />
 
             <Route path="/cadastros/produtos" element={<ProtectedRoute pageKey="produtos"><CadastroProdutos /></ProtectedRoute>} />
             <Route path="/cadastros/tipos" element={<ProtectedRoute pageKey="tipos"><TipoProduto /></ProtectedRoute>} />
