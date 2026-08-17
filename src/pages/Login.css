@@ -1,0 +1,99 @@
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(100, 167, 251, 0.18), transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(100, 167, 251, 0.12), transparent 45%),
+    var(--primary);
+  padding: 20px;
+}
+
+.login-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 34px 30px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.login-card__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.login-card__mark {
+  width: 40px;
+  height: 40px;
+  background: var(--primary);
+  color: var(--accent);
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+.login-card__brand h1 {
+  font-size: 24px;
+}
+.login-card__brand h1 b { color: var(--accent); }
+
+.login-card__subtitle {
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  margin: 6px 0 22px;
+}
+
+.pin-display {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.pin-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  transition: background var(--transition), border-color var(--transition);
+}
+.pin-dot--filled {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 6px;
+}
+.pin-key {
+  padding: 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--primary);
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+.pin-key:active { transform: scale(0.96); }
+.pin-key:hover { background: var(--surface-alt); }
+.pin-key--muted { color: var(--text-secondary); font-size: 16px; }
+.pin-key--accent {
+  background: var(--accent);
+  color: var(--primary);
+  border-color: var(--accent);
+}
+.pin-key--accent:hover { background: var(--accent-dark); color: var(--white); }
+
+.login-card__hint {
+  margin-top: 20px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
