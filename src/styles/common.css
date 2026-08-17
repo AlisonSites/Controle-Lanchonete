@@ -767,12 +767,14 @@ table.data-table {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
 
 .stat-card__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
 .stat-card__label {
@@ -781,6 +783,10 @@ table.data-table {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .stat-card__icon {
@@ -796,9 +802,12 @@ table.data-table {
 
 .stat-card__value {
   font-family: var(--font-mono);
-  font-size: 24px;
+  font-size: clamp(17px, 2.4vw, 24px);
   font-weight: 700;
   color: var(--primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stat-card__trend {
@@ -822,16 +831,23 @@ table.data-table {
 }
 
 /* ===== Bar chart (SVG-free, pure CSS) ===== */
+.bar-chart {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .bar-chart__bars {
   display: flex;
   align-items: flex-end;
   gap: 10px;
   padding: 10px 4px 0;
+  min-width: min-content;
 }
 
 .bar-chart__col {
-  flex: 1;
-  min-width: 0;
+  flex: 1 0 38px;
+  min-width: 38px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -842,30 +858,44 @@ table.data-table {
 
 .bar-chart__value {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-secondary);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 52px;
 }
 
 .bar-chart__bar {
   width: 100%;
-  max-width: 42px;
+  max-width: 30px;
   border-radius: 6px 6px 2px 2px;
   min-height: 4px;
   transition: height var(--transition);
+  flex-shrink: 0;
 }
 
 .bar-chart__label {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-secondary);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  max-width: 44px;
+}
+
+@media (max-width: 640px) {
+  .bar-chart__col { flex-basis: 32px; min-width: 32px; }
+  .bar-chart__value, .bar-chart__label { font-size: 9.5px; }
 }
 
 /* ===== Date range presets ===== */
+.panel__presets {
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
 .date-presets {
   display: flex;
   flex-wrap: wrap;

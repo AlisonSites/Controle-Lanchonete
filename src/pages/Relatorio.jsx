@@ -246,8 +246,8 @@ export default function Relatorio() {
       </div>
 
       <div className="panel" style={{ marginBottom: 20 }}>
-        <div style={{ padding: '16px 18px 0' }}>
-          <div className="date-presets" style={{ marginBottom: 14 }}>
+        <div className="panel__presets">
+          <div className="date-presets">
             {PRESETS.map((p) => (
               <button
                 key={p.label}
